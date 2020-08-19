@@ -74,15 +74,10 @@ class PromptBox {
         window.addEventListener('resize', this.backdrop.onresize);
         this.backdrop.onresize();
     }
-    setInputStyle(style) {
-        Object.assign(this.element.style, style);
-    }
-    setButtonStyle(style) {
-        Object.assign(this.button.style, style);
-    }
-    setBackgroundStyle(style) {
-        Object.assign(this.backdrop.style, style);
-    }
+    setTextStyle(style) { Object.assign(this.text.style, style); this.backdrop.onresize(); }
+    setInputStyle(style) { Object.assign(this.element.style, style); this.backdrop.onresize(); }
+    setButtonStyle(style) { Object.assign(this.button.style, style); this.backdrop.onresize(); }
+    setBackgroundStyle(style) { Object.assign(this.backdrop.style, style); this.backdrop.onresize(); }
     hide() {
         window.removeEventListener('resize', this.backdrop.onresize);
         this.backdrop.remove();
@@ -135,7 +130,7 @@ class SliderBox {
         this.button.onmouseover = () => { this.button.style.color = '#009900' };
         this.button.onmouseout = () => { this.button.style.color = '#00ff00' };
         this.button.onclick = () => {
-            this.onReturn(this.slider.value);
+            this.onReturn(window.parseInt(this.slider.value));
             this.hide();
         };
         // Indicator Initalization
@@ -178,6 +173,11 @@ class SliderBox {
         window.addEventListener('resize', this.backdrop.onresize);
         this.backdrop.onresize();
     }
+    setTextStyle(style) { Object.assign(this.text.style, style); this.backdrop.onresize(); }
+    setButtonStyle(style) { Object.assign(this.button.style, style); this.backdrop.onresize(); }
+    setIndicatorStyle(style) { Object.assign(this.indicator.style, style); this.backdrop.onresize(); }
+    setSliderStyle(style) { Object.assign(this.slider.style, style); this.backdrop.onresize(); }
+    setSliderProperties(properties) { Object.assign(this.slider, properties); this.backdrop.onresize(); }
     show() {
         window.addEventListener('resize', this.backdrop.onresize);
         document.body.appendChild(this.backdrop);
@@ -185,5 +185,113 @@ class SliderBox {
     hide() {
         window.removeEventListener('resize', this.backdrop.onresize);
         this.backdrop.remove();
+    }
+}
+
+let map = null;
+let CANVAS = null;
+let tilesize = 64;
+let colors = [[255, 255, 255]];
+const btnNew = document.getElementById('btnNew');
+const btnImport = document.getElementById('btnImport');
+const btnExport = document.getElementById('btnExport');
+document.querySelector("html").style.overflowX = 'hidden';
+document.querySelector("html").style.overflowY = 'hidden';
+
+btnNew.onclick = () => {
+    let widthInput = new SliderBox("Set width:", width => {
+        let heightInput = new SliderBox("Set height:", height => {
+            map = new Array(height);
+            for(let row = 0; row < map.length; row++) {
+                map[row] = new Array(width);
+                for(let col = 0; col < map[row].length; col++) {
+                    map[row][col] = 0;
+                }
+            }
+            CANVAS = document.createElement('CANVAS');
+            CANVAS.width = tilesize * width;
+            CANVAS.height = tilesize * height;
+            Object.assign(CANVAS.style, {
+               position: 'absolute',
+               zIndex: -1,
+               left: 0,
+               top: 0 
+            });
+            document.body.appendChild(CANVAS);
+            updateCanvas();
+            resetView();
+            dragElement(CANVAS);
+        }, 5, 32);
+        heightInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
+    }, 5, 32);
+    widthInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
+};
+
+const updateCanvas = () => {
+    if (CANVAS === null) return;
+    let CTX = CANVAS.getContext('2d');
+    CANVAS.width = tilesize * map[0].length;
+    CANVAS.height = tilesize * map.length;
+    for(let row = 0; row < map.length; row++) {
+        for(let col = 0; col < map[row].length; col++) {
+            CTX.fillStyle = `rgb(${colors[map[row][col]][0]}, ${colors[map[row][col]][1]}, ${colors[map[row][col]][2]})`;
+            CTX.strokeStyle = `rgb(${255 - colors[map[row][col]][0]}, ${255 - colors[map[row][col]][1]}, ${255 - colors[map[row][col]][2]})`;
+            CTX.fillRect(col * tilesize, row * tilesize, tilesize, tilesize);
+            CTX.strokeRect(col * tilesize, row * tilesize, tilesize, tilesize);
+        }
+    }
+};
+const changeSize = interval => {
+    if (CANVAS === null) return;
+    tilesize += interval;
+    CANVAS.style.left = ((CANVAS.style.left.split('px')[0]) - interval * 2) + 'px';
+    CANVAS.style.top = ((CANVAS.style.top.split('px')[0]) - interval * 2) + 'px';
+    updateCanvas();
+}
+
+const resetView = () => {
+    if (CANVAS === null) return;
+    tilesize = 64;
+    updateCanvas();
+    CANVAS.style.left = window.innerWidth / 2 - CANVAS.offsetWidth / 2 + 'px';
+    CANVAS.style.top = window.innerHeight / 2 - CANVAS.offsetHeight / 2 + 'px';
+    updateCanvas();
+};
+
+const dragElement = elmnt => {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+        // if present, the header is where you move the DIV from:
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
     }
 }

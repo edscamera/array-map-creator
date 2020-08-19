@@ -6,9 +6,12 @@
     </head>
     <body>
         <div id='NavigationBar'>
-            <div class='NavigationItem NoSelect'>New</div>
-            <div class='NavigationItem NoSelect'>Import</div>
-            <div class='NavigationItem NoSelect'>Export</div>
+            <div class='NavigationItem NoSelect' id='btnNew'>New</div>
+            <div class='NavigationItem NoSelect' id='btnImport'>Import</div>
+            <div class='NavigationItem NoSelect' id='btnExport'>Export</div>
+            <div class='NavigationItem NoSelect' onclick='changeSize(1)' style='float: right;'>+</div>
+            <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
+            <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
         </div>
         <script src='script.js'></script>
     </body>

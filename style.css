@@ -37,3 +37,10 @@ body {
     background-color: #999999;
     font-family: 'Roboto Mono', monospace;
 }
+.NavigationBox {
+    float: right;
+    padding: 10px;
+    font-size: 30px;
+    background-color: #ffffff;
+    font-family: 'Roboto Mono', monospace;
+}
