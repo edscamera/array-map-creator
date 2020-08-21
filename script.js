@@ -191,12 +191,14 @@ class SliderBox {
 let map = null;
 let CANVAS = null;
 let tilesize = 64;
-let colors = [[255, 255, 255]];
+let colors = [[255, 255, 255], [0, 0, 0]];
+let selectedTool = document.getElementById('Toolbar').children[0];
 const btnNew = document.getElementById('btnNew');
 const btnImport = document.getElementById('btnImport');
 const btnExport = document.getElementById('btnExport');
 document.querySelector("html").style.overflowX = 'hidden';
 document.querySelector("html").style.overflowY = 'hidden';
+Math.__proto__.clamp = (val, min, max) => Math.max(Math.min(val, max), min);
 
 btnNew.onclick = () => {
     let widthInput = new SliderBox("Set width:", width => {
@@ -208,25 +210,70 @@ btnNew.onclick = () => {
                     map[row][col] = 0;
                 }
             }
-            CANVAS = document.createElement('CANVAS');
-            CANVAS.width = tilesize * width;
-            CANVAS.height = tilesize * height;
-            Object.assign(CANVAS.style, {
-               position: 'absolute',
-               zIndex: -1,
-               left: 0,
-               top: 0 
-            });
-            document.body.appendChild(CANVAS);
-            updateCanvas();
-            resetView();
-            dragElement(CANVAS);
+            createCanvas(width, height);
+            
         }, 5, 32);
         heightInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
     }, 5, 32);
     widthInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
 };
-
+const createCanvas = (width, height) => {
+    if (CANVAS !== null) CANVAS.remove();
+    CANVAS = document.createElement('CANVAS');
+    CANVAS.width = tilesize * width;
+    CANVAS.height = tilesize * height;
+    Object.assign(CANVAS.style, {
+        position: 'absolute',
+        zIndex: -1,
+        left: 0,
+        top: 0 
+    });
+    document.body.appendChild(CANVAS);
+    updateCanvas();
+    resetView();
+    dragElement(CANVAS);
+    CANVAS.onmousemove = (event) => {
+        CANVAS.mousePosition = {
+            x: event.offsetX,
+            y: event.offsetY
+        }
+        if (CANVAS.mouseDown === true) {
+            switch(selectedTool.alt) {
+                case 'draw':
+                case 'eraser':
+                    map[Math.clamp(Math.floor(CANVAS.mousePosition.y / tilesize), 0, map.length - 1)][Math.clamp(Math.floor(CANVAS.mousePosition.x / tilesize), 0, map[0].length - 1)] = selectedTool.alt === 'draw' ? 1 : 0;
+                    updateCanvas();
+                    break;
+            }
+        }
+    }
+    window.addEventListener('mousedown', () => {
+        CANVAS.mouseDown = true;
+        if (selectedTool.alt === 'fill') {
+            let replaceCoord = [Math.clamp(Math.floor(CANVAS.mousePosition.y / tilesize), 0, map.length - 1), Math.clamp(Math.floor(CANVAS.mousePosition.x / tilesize), 0, map[0].length - 1)];
+            let replace = map[replaceCoord[0]][replaceCoord[1]];
+            
+            if (replace !== 1) floodFill(replaceCoord[1], replaceCoord[0], 0, 1);
+            updateCanvas();
+        }
+    });
+    window.addEventListener('mouseup', () => CANVAS.mouseDown = false);
+};
+const floodFill = (x, y, rep, wit) => {
+    if (map[y][x] === rep) map[y][x] = wit;
+    if (x + 1 < map[0].length && map[y][x + 1] === rep) {
+        floodFill(x + 1, y, rep, wit);
+    }
+    if (x - 1 > -1 && map[y][x - 1] === rep) {
+        floodFill(x - 1, y, rep, wit);
+    }
+    if (y + 1 < map.length && map[y + 1][x] === rep) {
+        floodFill(x, y + 1, rep, wit);
+    }
+    if (y - 1 > -1 && map[y - 1][x] === rep) {
+        floodFill(x, y - 1, rep, wit);
+    }
+};
 const updateCanvas = () => {
     if (CANVAS === null) return;
     let CTX = CANVAS.getContext('2d');
@@ -247,8 +294,7 @@ const changeSize = interval => {
     CANVAS.style.left = ((CANVAS.style.left.split('px')[0]) - interval * 2) + 'px';
     CANVAS.style.top = ((CANVAS.style.top.split('px')[0]) - interval * 2) + 'px';
     updateCanvas();
-}
-
+};
 const resetView = () => {
     if (CANVAS === null) return;
     tilesize = 64;
@@ -257,7 +303,16 @@ const resetView = () => {
     CANVAS.style.top = window.innerHeight / 2 - CANVAS.offsetHeight / 2 + 'px';
     updateCanvas();
 };
-
+const selectTool = tool => {
+    for(let e of document.getElementById('Toolbar').children) {
+        e.classList.remove('ToolSelected');
+        e.classList.remove('Tool');
+        e.classList.add('Tool');
+    }
+    tool.classList.remove('Tool');
+    tool.classList.add('ToolSelected');
+    selectedTool = tool;
+};
 const dragElement = elmnt => {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (document.getElementById(elmnt.id + "header")) {
@@ -278,6 +333,7 @@ const dragElement = elmnt => {
         document.onmousemove = elementDrag;
     }
     function elementDrag(e) {
+        if (selectedTool.alt !== "move") return;
         e = e || window.event;
         e.preventDefault();
         // calculate the new cursor position:
@@ -294,4 +350,5 @@ const dragElement = elmnt => {
         document.onmouseup = null;
         document.onmousemove = null;
     }
-}
+};
+selectTool(selectedTool);

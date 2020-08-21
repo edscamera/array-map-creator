@@ -44,3 +44,21 @@ body {
     background-color: #ffffff;
     font-family: 'Roboto Mono', monospace;
 }
+#ToolContainer {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+}
+#Toolbar {
+    position: relative;
+    left: -50%;
+}
+.Tool {
+    width:50px;
+}
+.Tool:hover {
+    width:75px;
+}
+.ToolSelected {
+    width: 100px;
+}

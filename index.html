@@ -13,6 +13,14 @@
             <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
             <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
         </div>
+        <div id='ToolContainer'>
+            <div id='Toolbar'>
+                <img alt="move" class='Tool NoSelect' src='images/move.png' onclick="selectTool(this)">
+                <img alt="draw" class='Tool NoSelect' src='images/pencil.png' onclick="selectTool(this)">
+                <img alt="eraser" class='Tool NoSelect' src='images/eraser.png' onclick="selectTool(this)">
+                <img alt="fill" class='Tool NoSelect' src='images/fill.png' onclick="selectTool(this)">
+            </div>
+        </div>
         <script src='script.js'></script>
     </body>
 </html>
