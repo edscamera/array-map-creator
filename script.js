@@ -191,7 +191,8 @@ class SliderBox {
 let map = null;
 let CANVAS = null;
 let tilesize = 64;
-let colors = [[255, 255, 255], [0, 0, 0]];
+let colors = [[255, 255, 255], [0, 0, 0], [255, 0, 0]];
+let selectedColor = 1;
 let selectedTool = document.getElementById('Toolbar').children[0];
 const btnNew = document.getElementById('btnNew');
 const btnImport = document.getElementById('btnImport');
@@ -222,6 +223,8 @@ const createCanvas = (width, height) => {
     CANVAS = document.createElement('CANVAS');
     CANVAS.width = tilesize * width;
     CANVAS.height = tilesize * height;
+    CANVAS.onmouseenter = () => CANVAS.mousein = true;
+    CANVAS.onmouseleave = () => CANVAS.mousein = false;
     Object.assign(CANVAS.style, {
         position: 'absolute',
         zIndex: -1,
@@ -241,7 +244,7 @@ const createCanvas = (width, height) => {
             switch(selectedTool.alt) {
                 case 'draw':
                 case 'eraser':
-                    map[Math.clamp(Math.floor(CANVAS.mousePosition.y / tilesize), 0, map.length - 1)][Math.clamp(Math.floor(CANVAS.mousePosition.x / tilesize), 0, map[0].length - 1)] = selectedTool.alt === 'draw' ? 1 : 0;
+                    map[Math.clamp(Math.floor(CANVAS.mousePosition.y / tilesize), 0, map.length - 1)][Math.clamp(Math.floor(CANVAS.mousePosition.x / tilesize), 0, map[0].length - 1)] = selectedTool.alt === 'draw' ? selectedColor : 0;
                     updateCanvas();
                     break;
             }
@@ -249,11 +252,11 @@ const createCanvas = (width, height) => {
     }
     window.addEventListener('mousedown', () => {
         CANVAS.mouseDown = true;
-        if (selectedTool.alt === 'fill') {
+        if (selectedTool.alt === 'fill' && CANVAS.mousein) {
             let replaceCoord = [Math.clamp(Math.floor(CANVAS.mousePosition.y / tilesize), 0, map.length - 1), Math.clamp(Math.floor(CANVAS.mousePosition.x / tilesize), 0, map[0].length - 1)];
             let replace = map[replaceCoord[0]][replaceCoord[1]];
             
-            if (replace !== 1) floodFill(replaceCoord[1], replaceCoord[0], 0, 1);
+            if (replace !== selectedColor) floodFill(replaceCoord[1], replaceCoord[0], replace, selectedColor);
             updateCanvas();
         }
     });
@@ -287,6 +290,31 @@ const updateCanvas = () => {
             CTX.strokeRect(col * tilesize, row * tilesize, tilesize, tilesize);
         }
     }
+};
+const addColor = color => {
+    while (document.getElementById('ColorList').children.length > 0) for(let e of document.getElementById('ColorList').children) e.remove();
+    for(let i = 0; i < colors.length; i++) {
+        let a = document.createElement('DIV');
+        Object.assign(a.style, {
+            backgroundColor: `rgb(${colors[i].toString()})`,
+            color: `rgb(${255 - colors[i][0]}, ${255 - colors[i][1]}, ${255 - colors[i][2]})`,
+            borderStyle: 'solid',
+            borderColor: `rgb(${255 - colors[i][0]}, ${255 - colors[i][1]}, ${255 - colors[i][2]})`,
+            fontFamily: "'Roboto Mono', monospace"
+        });
+        if (i === selectedColor) {
+            a.style.fontWeight = 'bold';
+            a.style.borderWidth = '8px';
+        }
+        a.innerText = `rgb(${colors[i].toString()})`;
+        a.classList.add("Color");
+        a.onclick = () => {
+            selectedColor = i;
+            addColor();
+        }
+        document.getElementById('ColorList').appendChild(a);
+    }
+    if (color === undefined) return;
 };
 const changeSize = interval => {
     if (CANVAS === null) return;
@@ -352,3 +380,4 @@ const dragElement = elmnt => {
     }
 };
 selectTool(selectedTool);
+addColor();

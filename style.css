@@ -62,3 +62,24 @@ body {
 .ToolSelected {
     width: 100px;
 }
+#ColorContainer {
+    float: right;
+    width: 250px;
+    padding: 10px;
+    margin: 10px;
+}
+#AddColor {
+    background-color: #00aa00;
+    font-size: 30px;
+    width: 100%;
+}
+#AddColor:hover {
+    background-color: #00cc00;
+    font-size: 30px;
+    width: 100%;
+}
+.Color {
+    padding: 10px;
+    margin: 10px;
+    user-select: none;
+}

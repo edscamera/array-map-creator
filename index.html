@@ -13,6 +13,12 @@
             <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
             <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
         </div>
+        <div id='ColorContainer'>
+            <div id='ColorList'></div>
+            <div id='AddColor' onclick="addColor()">
+                <center style='user-select: none;'>+</center>
+            </div>
+        </div>
         <div id='ToolContainer'>
             <div id='Toolbar'>
                 <img alt="move" class='Tool NoSelect' src='images/move.png' onclick="selectTool(this)">
