@@ -187,11 +187,88 @@ class SliderBox {
         this.backdrop.remove();
     }
 }
+class ColorBox {
+    constructor(text, onReturn, defaultColor) {
+        // Set undefined arguments to default values
+        if (text === undefined) text = "";
+        if (onReturn === undefined) onReturn = () => {};
+        if (defaultColor === undefined) defaultColor = '#ffffff';
+        // Container Initalization
+        this.backdrop = document.createElement('DIV');
+        this.backdrop.style.position = 'absolute';
+        // Question Text Initalization
+        this.text = document.createElement('H1');
+        this.text.innerHTML = text;
+        Object.assign(this.text.style, {
+            color: '#ffffff',
+            position: 'absolute',
+            userSelect: 'None'
+        });
+        // Color Picker Initalization
+        this.color = document.createElement('INPUT');
+        Object.assign(this.color, {
+            type: 'color',
+            value: defaultColor
+        });
+        this.color.style.position = 'absolute';
+        // Button Initalization
+        this.button = document.createElement('BUTTON');
+        this.button.innerHTML = '&#10004;';
+        Object.assign(this.button.style, {
+            color: '#00ff00',
+            position: 'absolute',
+            backgroundColor: 'Transparent',
+            outline: 'None',
+            border: 'None',
+            userSelect: 'None',
+            margin: 0
+        });
+        this.button.onmouseover = () => { this.button.style.color = '#009900' };
+        this.button.onmouseout = () => { this.button.style.color = '#00ff00' };
+        this.button.onclick = () => {
+            onReturn(this.color.value);
+            this.hide();
+        };
+        // Resize Listener
+        this.backdrop.onresize = () => {
+            Object.assign(this.backdrop.style, {
+                width: window.innerWidth + 'px',
+                height: window.innerHeight + 'px'
+            });
+            this.text.style.left = (window.innerWidth / 2 - this.text.offsetWidth / 2) + 'px';
+            this.text.style.top = (window.innerHeight / 2 - this.color.offsetHeight - this.text.offsetHeight * 2) + 'px';
+            this.color.style.left = (window.innerWidth / 2 - this.color.offsetWidth / 2) + 'px';
+            this.color.style.top = (window.innerHeight / 2 - this.color.offsetHeight / 2) + 'px';
+            this.button.style.left = (window.innerWidth / 2 + this.color.offsetWidth / 2) + 'px';
+            this.button.style.top = (window.innerHeight / 2 - this.color.offsetHeight / 2) + 'px';
+        }
+        // Append Elements
+        this.backdrop.append(this.color, this.text, this.button);
+        document.body.append(this.backdrop);
+        // Initial Positioning
+        window.addEventListener('resize', this.backdrop.onresize);
+        this.backdrop.onresize();
+        // Show Color Menu
+        window.setTimeout(() => { this.color.click(); }, 1);
+    }
+    setTextStyle(style) { Object.assign(this.text.style, style); this.backdrop.onresize(); }
+    setButtonStyle(style) { Object.assign(this.button.style, style); this.backdrop.onresize(); }
+    setPickerStyle(style) { Object.assign(this.color.style, style); this.backdrop.onresize(); }
+    setPickerProperties(properties) { Object.assign(this.color, properties); this.backdrop.onresize(); }
+    show() {
+        window.addEventListener('resize', this.backdrop.onresize);
+        document.body.appendChild(this.backdrop);
+    }
+    hide() {
+        window.removeEventListener('resize', this.backdrop.onresize);
+        this.backdrop.remove();
+    }
+}
 
 let map = null;
 let CANVAS = null;
 let tilesize = 64;
-let colors = [[255, 255, 255], [0, 0, 0], [255, 0, 0]];
+let colors = [[255, 255, 255], [0, 0, 0]];
 let selectedColor = 1;
 let selectedTool = document.getElementById('Toolbar').children[0];
 const btnNew = document.getElementById('btnNew');
@@ -292,6 +369,14 @@ const updateCanvas = () => {
     }
 };
 const addColor = color => {
+    if (color !== undefined) {
+        let colorChoice = new ColorBox("Choose a color:", c => {
+            let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c);
+            colors.push([window.parseInt(result[1], 16), window.parseInt(result[2], 16), window.parseInt(result[3], 16)]);
+            addColor();
+        }, '#ff0000');
+        colorChoice.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
+    }
     while (document.getElementById('ColorList').children.length > 0) for(let e of document.getElementById('ColorList').children) e.remove();
     for(let i = 0; i < colors.length; i++) {
         let a = document.createElement('DIV');
@@ -312,9 +397,17 @@ const addColor = color => {
             selectedColor = i;
             addColor();
         }
-        document.getElementById('ColorList').appendChild(a);
+        a.oncontextmenu = event => {
+            event.preventDefault();
+            for(let i = 0; i < colors.length; i++) {
+                if (a.parentElement.children[i] === a) {
+                    colors.splice(i, 1);
+                    addColor();
+                }
+            }
+        };
+        document.getElementById('ColorList').append(a);
     }
-    if (color === undefined) return;
 };
 const changeSize = interval => {
     if (CANVAS === null) return;
