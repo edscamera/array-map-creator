@@ -374,7 +374,6 @@ const addColor = color => {
             let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c);
             colors.push([window.parseInt(result[1], 16), window.parseInt(result[2], 16), window.parseInt(result[3], 16)]);
             addColor();
-            document.getElementById('ColorList').scrollTop = document.getElementById('ColorList').scrollHeight;
         }, '#ff0000');
         colorChoice.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
     }

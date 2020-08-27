@@ -68,10 +68,6 @@ body {
     padding: 10px;
     margin: 10px;
 }
-#ColorList {
-    min-height: 10px;
-    max-height: 500px;
-}
 #AddColor {
     background-color: #00aa00;
     font-size: 30px;
