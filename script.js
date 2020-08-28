@@ -400,11 +400,24 @@ const addColor = color => {
         }
         a.oncontextmenu = event => {
             event.preventDefault();
+            let d = -1;
             for(let i = 0; i < colors.length; i++) {
                 if (a.parentElement.children[i] === a) {
+                    if (i === 0) return;
+                    d = i;
                     colors.splice(i, 1);
                     addColor();
+                    break;
                 }
+            }
+            if (map !== null) {
+                for(let row = 0; row < map.length; row++) {
+                    for(let col = 0; col < map[row].length; col++) {
+                        if (map[row][col] === d) map[row][col] = 0;
+                    }
+                }
+                selectedColor = 0;
+                updateCanvas();
             }
         };
         document.getElementById('ColorList').append(a);
