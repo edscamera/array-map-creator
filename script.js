@@ -279,6 +279,7 @@ document.querySelector("html").style.overflowY = 'hidden';
 Math.__proto__.clamp = (val, min, max) => Math.max(Math.min(val, max), min);
 
 btnNew.onclick = () => {
+    setMode('none');
     let widthInput = new SliderBox("Set width:", width => {
         let heightInput = new SliderBox("Set height:", height => {
             map = new Array(height);
@@ -289,12 +290,53 @@ btnNew.onclick = () => {
                 }
             }
             createCanvas(width, height);
-            
+            setMode('edit');
+            resetView();
         }, 5, 32);
         heightInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
     }, 5, 32);
     widthInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
 };
+btnImport.onclick = () => setMode('import');
+btnExport.onclick = () => {
+    setMode('export');
+    let updateExport = () => {
+        let out = "";
+        let space = document.getElementById('ExpBeautify').checked;
+        try {
+            if (map === null) { out = "No canvas to export!" }
+            else {
+                switch(document.getElementById('ExpLanguage').value) {
+                    case 'javascript':
+                        out += 'let arrayMap = [';
+                        break;
+                    case 'java':
+                        out += 'int[][] arrayMap = {';
+                        break;
+                    case 'python':
+                        out += 'arrayMap = [';
+                        break;
+                }
+                for(let i = 0; i < map.length; i++) {
+                    if (space && i !== 0) out += "\t";
+                    out += `[${map[i].toString()}]`;
+                    out += i === map.length - 1 ? ']' : ',';
+                    if (space) out += '\n';
+                }
+                if (space) out = out.substr(0, out.length - 1);
+                if (['java', 'javascript'].includes(document.getElementById('ExpLanguage').value)) {
+                    out += ';';
+                }
+            }
+        } catch(e) {
+            out = 'Error generating export code\n\n' + e;
+        }
+        document.getElementById('ExpField').value = out;
+    }
+    document.getElementById('ExpLanguage').onchange = updateExport;
+    document.getElementById('ExpBeautify').onchange = updateExport;
+    updateExport();
+}
 const createCanvas = (width, height) => {
     if (CANVAS !== null) CANVAS.remove();
     CANVAS = document.createElement('CANVAS');
@@ -308,7 +350,7 @@ const createCanvas = (width, height) => {
         left: 0,
         top: 0 
     });
-    document.body.appendChild(CANVAS);
+    document.getElementById('ScreenEdit').appendChild(CANVAS);
     updateCanvas();
     resetView();
     dragElement(CANVAS);
@@ -486,5 +528,24 @@ const dragElement = elmnt => {
         document.onmousemove = null;
     }
 };
+const setMode = mode => {
+    document.getElementById('ScreenEdit').style.display = 'none';
+    document.getElementById('ScreenImport').style.display = 'none';
+    document.getElementById('ScreenExport').style.display = 'none';
+    switch(mode) {
+        case 'edit':
+            document.getElementById('ScreenEdit').style.display = 'block';
+            break;
+        case 'import':
+            document.getElementById('ScreenImport').style.display = 'block';
+            break;
+        case 'export':
+            document.getElementById('ScreenExport').style.display = 'block';
+            break;
+        default:
+            return false;
+    }
+}
 selectTool(selectedTool);
+setMode('none');
 addColor();

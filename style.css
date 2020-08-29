@@ -10,10 +10,13 @@
 body {
     background: #000000;
     margin: 0px;
+    font-family: 'Roboto Mono', monospace;
+    color: #ffffff;
 }
 #NavigationBar {
     width: 100%;
     background: #ffffff;
+    color: #000000;
     float:left;
 }
 .NavigationItem {

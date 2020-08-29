@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Map Maker</title>
-        <link href="style.css" rel="stylesheet">
-    </head>
-    <body>
-        <div id='NavigationBar'>
-            <div class='NavigationItem NoSelect' id='btnNew'>New</div>
-            <div class='NavigationItem NoSelect' id='btnImport'>Import</div>
-            <div class='NavigationItem NoSelect' id='btnExport'>Export</div>
-            <div class='NavigationItem NoSelect' onclick='changeSize(1)' style='float: right;'>+</div>
-            <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
-            <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
-        </div>
+
+<head>
+    <title>Map Maker</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id='NavigationBar'>
+        <div class='NavigationItem NoSelect' id='btnNew'>New</div>
+        <div class='NavigationItem NoSelect' id='btnImport'>Import</div>
+        <div class='NavigationItem NoSelect' id='btnExport'>Export</div>
+        <div class='NavigationItem NoSelect' onclick='changeSize(1)' style='float: right;'>+</div>
+        <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
+        <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
+    </div>
+    <div id='ScreenEdit'>
         <div id='ColorContainer'>
             <div id='ColorList' style='overflow-y: auto;'></div>
             <div id='AddColor' onclick="addColor(true)">
@@ -21,12 +24,38 @@
         </div>
         <div id='ToolContainer'>
             <div id='Toolbar'>
-                <img alt="move" class='Tool NoSelect' src='images/move.png' onclick="selectTool(this)">
-                <img alt="draw" class='Tool NoSelect' src='images/pencil.png' onclick="selectTool(this)">
-                <img alt="eraser" class='Tool NoSelect' src='images/eraser.png' onclick="selectTool(this)">
-                <img alt="fill" class='Tool NoSelect' src='images/fill.png' onclick="selectTool(this)">
+                <img alt="move" class='Tool NoSelect' src='images/move.png' onclick="selectTool(this)" />
+                <img alt="draw" class='Tool NoSelect' src='images/pencil.png' onclick="selectTool(this)" />
+                <img alt="eraser" class='Tool NoSelect' src='images/eraser.png' onclick="selectTool(this)" />
+                <img alt="fill" class='Tool NoSelect' src='images/fill.png' onclick="selectTool(this)" />
             </div>
         </div>
-        <script src='script.js'></script>
-    </body>
+    </div>
+    <div id='ScreenImport'>
+    </div>
+    <div id='ScreenExport'>
+        <center>
+            <br />
+            <br />
+            <br />
+            <br />
+            <form>
+                <label for='ExpLanguage'>Select a language: </label>
+                <select id='ExpLanguage'>
+                    <option value='javascript'>JavaScript</option>
+                    <option value='java'>Java</option>
+                    <option value='python'>Python</option>
+                </select>
+                <br />
+                <br />
+                <label for='ExpBeautify'>Beautify: </label>
+                <input id='ExpBeautify' type="checkbox">
+            </form>
+            <br />
+            <textarea rows='15' cols='30' id='ExpField'></textarea>
+        </center>
+    </div>
+    <script src='script.js'></script>
+</body>
+
 </html>
