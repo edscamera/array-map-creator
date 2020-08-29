@@ -297,7 +297,44 @@ btnNew.onclick = () => {
     }, 5, 32);
     widthInput.setTextStyle({ fontFamily: "'Roboto Mono', monospace" });
 };
-btnImport.onclick = () => setMode('import');
+btnImport.onclick = () => {
+    setMode('import');
+    document.getElementById('ImpSubmit').onclick = () => {
+        let input = document.getElementById('ImpField').value;
+        try {
+            input = input.replace(/ /g, '').split('=')[1];
+            input = input.replace(/{/g, '[');
+            input = input.replace(/}/g, ']');
+            input = input.replace(/;/g, '');
+            input = input.split('],');
+            map = new Array(input.length);
+            for(let i = 0; i < input.length; i++) {
+                input[i] = input[i].replace(/]/g, '');
+                input[i] = input[i].replace(/\[/g, '');
+                map[i] = input[i].split(',');
+            }
+            map = map.map(row => row.map(item => window.parseInt(item)));
+            let highestNumber = 0;
+            for(let row = 0; row < map.length; row++) {
+                for(let col = 0; col < map[row].length; col++) {
+                    if (map[row][col] > highestNumber) highestNumber = map[row][col];
+                }
+            }
+            colors = [[255, 255, 255], [0, 0, 0]];
+            if (highestNumber > 1) {
+                for(let i = 0; i < highestNumber - 1; i++) {
+                    colors.push(hslToRgb(1.0 / (highestNumber) * i, 1.0, 0.5));
+                }
+            }
+            setMode('edit');
+            addColor();
+            createCanvas();
+        } catch(e) {
+            document.getElementById('ImpField').value += '\n\nSyntax Error!';
+            console.log(e);
+        }
+    };
+};
 btnExport.onclick = () => {
     setMode('export');
     let updateExport = () => {
@@ -545,6 +582,30 @@ const setMode = mode => {
         default:
             return false;
     }
+}
+const hslToRgb = (h, s, l) => {
+    let r, g, b;
+
+    if(s == 0){
+        r = g = b = l; // achromatic
+    }else{
+        let hue2rgb = (p, q, t) => {
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        }
+
+        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        let p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 selectTool(selectedTool);
 setMode('none');
