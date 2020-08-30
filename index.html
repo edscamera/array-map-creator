@@ -2,18 +2,24 @@
 <html>
 
 <head>
-    <title>Map Maker</title>
+    <title>Array Map Creator</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
 <body>
     <div id='NavigationBar'>
+        <img class='NavigationItem NoSelect' id='btnInfo' style='height: 39px;' src='images/info.png' />
         <div class='NavigationItem NoSelect' id='btnNew'>New</div>
         <div class='NavigationItem NoSelect' id='btnImport'>Import</div>
         <div class='NavigationItem NoSelect' id='btnExport'>Export</div>
-        <div class='NavigationItem NoSelect' onclick='changeSize(1)' style='float: right;'>+</div>
-        <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
-        <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
+    </div>
+    <div id='ScreenInfo' style='height: 100%;'>
+        <center>
+            <br /><br /><br /><br /><br /><br />
+            <a target='_blank' style='color: #ffffff; text-decoration: none;' href='http://edwardscamera.com'>created by edwardscamera</a>
+            <br />
+            <a target='_blank' style='color: #ffffff; text-decoration: none;' href='https://github.com/edwardscamera/array-map-creator'>array-map-creator on github</a>
+        </center>
     </div>
     <div id='ScreenEdit'>
         <div id='ColorContainer'>
@@ -29,6 +35,11 @@
                 <img alt="eraser" class='Tool NoSelect' src='images/eraser.png' onclick="selectTool(this)" />
                 <img alt="fill" class='Tool NoSelect' src='images/fill.png' onclick="selectTool(this)" />
             </div>
+        </div>
+        <div style="position: absolute; top: 0px; right: 0px; color: #000000;">
+            <div class='NavigationItem NoSelect' onclick='changeSize(1)' style='float: right;'>+</div>
+            <div class='NavigationItem NoSelect' onclick='resetView()' style='float: right;'>=</div>
+            <div class='NavigationItem NoSelect' onclick='changeSize(-1)' style='float: right;'>-</div>
         </div>
     </div>
     <div id='ScreenImport'>
@@ -60,12 +71,15 @@
                 <br />
                 <label for='ExpBeautify'>Beautify: </label>
                 <input id='ExpBeautify' type="checkbox">
+                <br />
+                <br />
+                <label for='ExpColor'>Comment Colors: </label>
+                <input id='ExpColor' type="checkbox">
             </form>
             <br />
             <textarea readonly rows='15' cols='30' id='ExpField'></textarea>
         </center>
     </div>
-    <a href="http://edwardscamera.com" style="position: absolute; left: 5px; bottom: 5px; text-decoration: none; color: #ffffff">created by edwardscamera</a>
     <script src='script.js'></script>
 </body>
 
