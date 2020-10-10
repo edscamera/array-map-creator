@@ -534,12 +534,7 @@ const resetView = () => {
     updateCanvas();
 };
 const selectTool = tool => {
-    for(let e of document.getElementById('Toolbar').children) {
-        e.classList.remove('ToolSelected');
-        e.classList.remove('Tool');
-        e.classList.add('Tool');
-    }
-    tool.classList.remove('Tool');
+    for(let e of document.getElementById('Toolbar').children) e.classList.remove('ToolSelected');
     tool.classList.add('ToolSelected');
     selectedTool = tool;
 };
