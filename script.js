@@ -343,6 +343,8 @@ btnExport.onclick = () => {
         let space = document.getElementById('ExpBeautify').checked;
         let comments = document.getElementById('ExpColor').checked;
         let comment = '//';
+        let left_bracket = "[";
+        let right_bracket = "]";
         try {
             if (map === null) { out = "No canvas to export!" }
             else {
@@ -354,6 +356,8 @@ btnExport.onclick = () => {
                     case 'java':
                         out += 'int[][] arrayMap = {';
                         comment = '// ';
+                        left_bracket = "{";
+                        right_bracket = "}";
                         break;
                     case 'python':
                         out += 'arrayMap = [';
@@ -362,8 +366,8 @@ btnExport.onclick = () => {
                 }
                 for(let i = 0; i < map.length; i++) {
                     if (space && i !== 0) out += "\t";
-                    out += `[${map[i].toString()}]`;
-                    out += i === map.length - 1 ? ']' : ',';
+                    out += `${left_bracket}${map[i].toString()}${right_bracket}`;
+                    out += i === map.length - 1 ? right_bracket : ',';
                     if (space) out += '\n';
                 }
                 if (space) out = out.substr(0, out.length - 1);
