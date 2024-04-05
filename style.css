@@ -91,3 +91,6 @@ body {
     margin: 10px;
     user-select: none;
 }
+.backBtn {
+    color: white;
+}

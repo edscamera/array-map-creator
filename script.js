@@ -391,6 +391,11 @@ btnExport.onclick = () => {
     document.getElementById('ExpColor').onchange = updateExport;
     updateExport();
 }
+Array.from(document.getElementsByClassName("backBtn")).forEach(btn => {
+    btn.addEventListener("click", () => {
+        setMode("edit");
+    });
+});
 const createCanvas = (width, height) => {
     if (CANVAS !== null) CANVAS.remove();
     CANVAS = document.createElement('CANVAS');
@@ -601,6 +606,10 @@ const setMode = mode => {
         default:
             return false;
     }
+
+    Array.from(document.getElementsByClassName("backBtn")).forEach(elm => {
+        elm.style.display = map ? "block" : "none";
+    });
 }
 const hslToRgb = (h, s, l) => {
     let r, g, b;
