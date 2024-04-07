@@ -1,0 +1,65 @@
+:root {
+    --bg: #aaa;
+}
+html { overflow: hidden; }
+body {
+    margin: 0;
+    background-color: var(--bg);
+}
+
+canvas {
+    position: absolute;
+    filter: drop-shadow(0px 0px 4px #000);
+    background-image: url("./transparent.png");
+    
+    image-rendering: pixelated;
+    z-index: 1;
+}
+#toolbar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 1em;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 2;
+
+    display: flex;
+    gap: 2em;
+}
+#toolbar > div {
+    display: flex;
+    gap: 1em;
+}
+
+input[type=radio] { display: none; }
+label {
+    background-color: #fff;
+    width: 3em;
+    height: 3em;
+    display: flex;
+    filter: drop-shadow(0px 0px 4px #000) brightness(1);
+    transition: 100ms ease-in;
+    user-select: none;
+}
+label > * { margin: auto; }
+
+input[type=radio]:checked + label {
+    filter: drop-shadow(0px 0px 0px #000) brightness(0.6);
+}
+#palette input[type=radio]:checked + label {
+    filter: drop-shadow(0px 0px 0px #000) brightness(1);
+}
+#palette label > span {
+    text-shadow:
+        0.07em 0 4px #fff,
+        0 0.07em 4px #fff,
+        -0.07em 0 4px #fff,
+        0 -0.07em 4px #fff;
+}
+.btn:active {
+    filter: drop-shadow(0px 0px 0px #000) brightness(0.6);
+}
+
+img {
+}
